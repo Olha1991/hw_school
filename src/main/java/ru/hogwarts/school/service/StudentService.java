@@ -9,11 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
 
-    Logger logger = LoggerFactory.getLogger(StudentService.class);
+    private final Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
@@ -73,6 +75,22 @@ public class StudentService {
     public Collection<StudentsForSQL> getLastStudents(int limit){
         logger.debug("Requesting method getLastStudents (limit = {})", limit);
         return studentRepository.getLastStudents(limit);
+    }
+
+    public List<String> getStudentsByNameStartsWithLetter() {
+        return studentRepository.findAll().stream()
+                .map(u -> u.getName())
+                .filter(s -> s.startsWith("A"))
+                .sorted((s1, s2) -> s1.compareTo(s2))
+                .map(s -> s.toUpperCase())
+                .collect(Collectors.toList());
+    }
+
+    public Double getAverageAgeOfStudentsStream(){
+        return studentRepository.findAll().stream()
+                .mapToDouble(u -> u.getAge())
+                .average()
+                .orElse(Double.NaN);
     }
 
 

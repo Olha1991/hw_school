@@ -31,7 +31,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 public class AvatarService {
 
-    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+    private final Logger logger = LoggerFactory.getLogger(AvatarService.class);
     private final int avatarFileSizeLimit = 300;
     @Value("${students.avatar.dir.path}")
     private String avatarsDir;
@@ -108,7 +108,7 @@ public class AvatarService {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Collection<Avatar> avatars = avatarRepository.findAll(pageRequest).getContent();
         if (avatars.isEmpty()) {
-            throw new NotFoundException("Not found");
+            throw new NotFoundException();
         }
         return avatars;
     }

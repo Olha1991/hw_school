@@ -1,14 +1,18 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Collection;
+
 
 @RestController
 @RequestMapping("/faculty")
@@ -63,5 +67,23 @@ public class FacultyController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(faculties);
+    }
+
+    @GetMapping("/long-faculty-name")
+    public ResponseEntity<String> getLongFacultyName(){
+        return ResponseEntity.ok(facultyService.getLongFacultyName());
+    }
+
+    private final Logger logger = LoggerFactory.getLogger(FacultyController.class);
+    @GetMapping("sum")
+    public int sum(){
+        long time = System.currentTimeMillis();
+        Stream.iterate(1, a -> a + 1)
+                .limit(1_000_000)
+                .parallel()
+                .reduce(0, (a, b) -> a + b);
+        time = System.currentTimeMillis() - time;
+        logger.debug("time = {}", time);
+        return (int) time;
     }
 }
